@@ -83,14 +83,16 @@
                                     <button x-on:click="setEdit('{{ $service->id }}', '{{ $service->name }}')"
                                         class="text-gray-600 hover:text-gray-900"><i class="fas fa-fw fa-edit"></i></button>
 
-                                    <form action="{{ route('service.destroy', $service) }}" method="POST"
-                                        class="inline" onsubmit="return confirmDelete(this)">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button {{ $service->items->count() > 0 ? 'disabled' : '' }}
-                                            class="text-gray-600 hover:text-gray-900"><i
-                                                class="fas fa-fw fa-trash"></i></button>
-                                    </form>
+                                    @if ($service->items->count() <= 0)
+                                        <form action="{{ route('service.destroy', $service) }}" method="POST"
+                                            class="inline" onsubmit="return confirmDelete(this)">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button {{ $service->items->count() > 0 ? 'disabled' : '' }}
+                                                class="text-gray-600 hover:text-gray-900"><i
+                                                    class="fas fa-fw fa-trash"></i></button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

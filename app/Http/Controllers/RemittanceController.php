@@ -68,7 +68,11 @@ class RemittanceController extends Controller
 
     public function getInvoices($client)
     {
-        $relatedInvoices = Invoice::where('client_id', $client)->latest()->get();
+        $getRemittance = Remittance::where('remittance_no', 'RMT-PTND-II-0002')->get()->first();
+        $registeredInvoice = $getRemittance->items->map(function ($item) {
+            return $item->invoice->invoice_no;
+        });
+        $relatedInvoices = Invoice::where('client_id', $getRemittance->client_id)->whereNotIn('invoice_no', $registeredInvoice)->latest()->get();
         $relatedInvoices = collect($relatedInvoices)->map(function ($item) {
             return collect($item)->merge([
                 'amount' => number_format($item->amount()),

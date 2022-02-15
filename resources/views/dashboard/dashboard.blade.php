@@ -37,6 +37,14 @@
         </section>
 
         <script>
+            let testData1 = []
+            let testData2 = []
+            let testData = []
+            let testData3 = []
+            let delayed;
+            let delayed2;
+            refreshData()
+
             const InvoiceChart = document.getElementById('InvoiceChart').getContext('2d');
             const generateNumber = (from, to, n) => {
                 let data = []
@@ -45,18 +53,19 @@
                 }
                 return data
             }
+
             const data1 = {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
                     'Nov', 'Dec'
                 ],
                 datasets: [{
                     label: 'Value of Invoice',
-                    data: generateNumber(50000000, 300000000, 12),
+                    data: testData1,
                     borderColor: 'rgba(255, 99, 132, 1)',
                     backgroundColor: 'rgba(255, 99, 132, 0.2)'
                 }, {
                     label: 'Value of Reimbursment',
-                    data: generateNumber(50000000, 300000000, 12),
+                    data: testData2,
                     borderColor: 'rgba(54, 162, 235, 1)',
                     backgroundColor: 'rgba(54, 162, 235, 0.2)'
                 }]
@@ -65,6 +74,18 @@
                 type: 'line',
                 data: data1,
                 options: {
+                    animation: {
+                        onComplete: () => {
+                            delayed = true;
+                        },
+                        delay: (context) => {
+                            let delay = 0;
+                            if (context.type === 'data' && context.mode === 'default' && !delayed) {
+                                delay = context.dataIndex * 200 + context.datasetIndex * 100;
+                            }
+                            return delay;
+                        },
+                    },
                     responsive: true,
                     plugins: {
                         legend: {
@@ -85,22 +106,36 @@
                 ],
                 datasets: [{
                     label: 'Total Invoice',
-                    data: generateNumber(100, 1000, 12),
+                    data: testData,
                     borderColor: 'rgba(255, 99, 132, 1)',
                     backgroundColor: 'rgba(255, 99, 132, 0.7)'
                 }, {
                     label: 'Total Reimbursment',
-                    data: generateNumber(100, 1000, 12),
+                    data: testData3,
                     borderColor: 'rgba(54, 162, 235, 1)',
                     backgroundColor: 'rgba(54, 162, 235, 0.7)'
                 }]
             };
+
             const myReimbursmentChart = new Chart(ReimbursmentChart, {
                 type: 'bar',
                 data: data2,
                 options: {
+                    animation: {
+                        onComplete: () => {
+                            delayed2 = true;
+                        },
+                        delay: (context) => {
+                            let delay = 0;
+                            if (context.type === 'data' && context.mode === 'default' && !delayed2) {
+                                delay = context.dataIndex * 300 + context.datasetIndex * 100;
+                            }
+                            return delay;
+                        },
+                    },
                     responsive: true,
                     plugins: {
+
                         legend: {
                             position: 'top',
                         },
@@ -111,6 +146,21 @@
                     }
                 },
             });
+
+            function refreshData() {
+                for (let index = 0; index < 12; index++) {
+                    testData[index] = Math.floor(Math.floor(Math.random() * 2 + 3)) * 74
+                    testData3[index] = Math.floor(Math.floor(Math.random() * 2 + 3)) * 74
+                    testData1[index] = (Math.floor(Math.random() * 10 + 3) / 2) * 10000000
+                    testData2[index] = (Math.floor(Math.random() * 10 + 3) / 2) * 10000000
+                }
+            }
+
+            setInterval(() => {
+                refreshData();
+                myReimbursmentChart.update();
+                myInvoiceChart.update();
+            }, 3000);
         </script>
 
         <section>

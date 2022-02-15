@@ -75,8 +75,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/client', [ClientController::class, 'index'])->name('client');
     Route::get('/client/create', [ClientController::class, 'create'])->name('client.create');
     Route::post('/client/create', [ClientController::class, 'store'])->name('client.store');
-    Route::get('/client/{client}/create', [ClientController::class, 'edit'])->name('client.edit');
-    Route::post('/client/{client}/create', [ClientController::class, 'update'])->name('client.update');
+    Route::get('/client/{client}/edit', [ClientController::class, 'edit'])->name('client.edit');
+    Route::post('/client/{client}/edit', [ClientController::class, 'update'])->name('client.update');
     Route::delete('/client/{client}/delete', [ClientController::class, 'destroy'])->name('client.delete');
 
     Route::get('/bank-account', [BankController::class, 'index'])->name('bank');

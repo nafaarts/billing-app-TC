@@ -111,7 +111,7 @@
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                    <div class="text-sm font-bold text-gray-900">
+                                    <div class="text-sm font-bold text-gray-900 mb-1">
                                         {{ $item->invoice->invoice_no }}
                                     </div>
                                     <div class="text-xs leading-5 text-gray-500">
@@ -126,29 +126,43 @@
                                     <div class="text-xs text-gray-500">
                                         {{ $item->invoice->invoice_type == 'reimbursment' ? 'ZERO' : 'STANDARD' }}
                                     </div>
+
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                    <div class="text-xs text-gray-900">
-                                        {{ number_format($item->invoice->amountWithPPN()) }}
+                                    <div class="text-xs flex items-center">
+                                        <span
+                                            class="text-gray-900 font-bold">{{ number_format($item->invoice->amountWithPPN()) }}</span>
+                                        <div style="font-size: 8px">
+                                            @if ($item->wht)
+                                                <span class="bg-green-500 p-1 ml-1 text-white rounded-md">WHT</span>
+                                            @endif
+                                            @if ($item->wapu)
+                                                <span class="bg-yellow-500 p-1 ml-1 rounded-md">WAPU</span>
+                                            @endif
+                                        </div>
                                     </div>
-                                    <div class="text-xs text-gray-500">
-                                        + {{ $remittance->currency == 'Rupiah' ? 'Rp' : '$' }}
-                                        {{ number_format($item->invoice->amountWithPPN() - $item->invoice->amount()) }}
-                                        {{ number_format($item->invoice->ppn) }}%
-                                        VAT
-                                    </div>
+                                    @if ($item->invoice->amountWithPPN() - $item->invoice->amount() > 0)
+                                        <div class="text-xs text-gray-500 mt-1">
+                                            + {{ $remittance->currency == 'Rupiah' ? 'Rp' : '$' }}
+                                            {{ number_format($item->invoice->amountWithPPN() - $item->invoice->amount()) }}
+                                            {{ number_format($item->invoice->ppn) }}%
+                                            VAT
+                                        </div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                    <div class="text-xs text-gray-900">
+                                    <div class="text-xs text-gray-900 font-bold">
                                         {{ number_format($item->net_amount) }}
                                     </div>
-                                    <div class="text-xs text-gray-500">
-                                        + {{ $remittance->currency == 'Rupiah' ? 'Rp' : '$' }}
-                                        {{ number_format($item->pph_tax) }}
-                                        PPh
-                                        23
-                                    </div>
+                                    @if ($item->pph_tax > 0)
+                                        <div class="text-xs text-gray-500">
+                                            + {{ $remittance->currency == 'Rupiah' ? 'Rp' : '$' }}
+                                            {{ number_format($item->pph_tax) }}
+                                            PPh
+                                            23
+                                        </div>
+                                    @endif
                                 </td>
 
 
@@ -166,7 +180,6 @@
                                     </form>
                                 </td>
                             </tr>
-
                         @endforeach
 
                     </tbody>
@@ -412,7 +425,7 @@
                 whtStatus: true,
                 kurs: null,
                 fetchData() {
-                    fetch('http://localhost:8000/getInvoices/{{ $remittance->client_id }}')
+                    fetch('http://localhost:8000/getInvoices/{{ $remittance->remittance_no }}')
                         .then(response => response.json())
                         .then(data => {
                             this.data = JSON.parse(JSON.stringify(data))

@@ -30,16 +30,18 @@ class RemittanceItemController extends Controller
         $data = [
             'remittance_id' => $remittanceData->id,
             'invoice_id' => $invoiceData->id,
-            'pph_tax' => $request->pph,
+            'pph_tax' => $request->pph ?? 0,
             'net_amount' => $request->net_amount,
             'remarks' => $request->remarks,
             'kurs' => $request->kurs,
-            'wapu' => $request->wapu ?? 0,
+            'wapu' => $request->wapu ?? '0',
             'wht' => $request->wht,
             'wht_id' => $request->wht == 1 ? $wht_id : null,
             'adm_other' => $request->administration ?? 0,
-            'ssp_lb_date' => $request->ssp_lb_date,
+            'ssp_lb_date' => $request->wapu == 1 ? $request->ssp_lb_date : null,
         ];
+
+        // dd($request, $data);
 
         RemittanceItem::create($data);
 

@@ -35,7 +35,7 @@ class Remittance extends Model
     public function amount()
     {
         return collect($this->items)->reduce(function ($total, $item) {
-            return $total + $item->invoice->amountWithPPN();
+            return $total + ($item->wht != 1 || $item->wapu != 1 ? $item->invoice->amountWithPPN() : $item->invoice->amount());
         });
     }
 
